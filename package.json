@@ -22,5 +22,13 @@
   },
   "devDependencies": {
     "standard": "^10.0.3"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joshwnj/labnotes.git"
+  },
+  "bugs": {
+    "url": "https://github.com/joshwnj/labnotes/issues"
+  },
+  "homepage": "https://github.com/joshwnj/labnotes#readme"
 }
