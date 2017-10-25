@@ -25,6 +25,14 @@ Every event has a corresponding `.png` and `.mp3` filename, like:
   2017-10-25-13-40-06.png
 ```
 
+## Development
+
+To run in dev mode:
+
+```
+DEVTOOLS=1 electron .
+```
+
 ## License
 
 MIT

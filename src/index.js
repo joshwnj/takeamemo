@@ -38,11 +38,15 @@ function start () {
     const win = new BrowserWindow({
       transparent: true,
       frame: false
-      // width: 400,
-      // height: 200
     })
 
     win.loadURL(`file://${__dirname}/browser/index.html`)
+
+    if (process.env.DEVTOOLS) {
+      win.webContents.openDevTools({
+        mode: 'undocked'
+      })
+    }
 
     tray = new Tray(trayImages.off)
     tray.setToolTip('labnotes')
