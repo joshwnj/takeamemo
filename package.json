@@ -1,10 +1,10 @@
 {
-  "name": "labnotes",
+  "name": "takeamemo",
   "version": "0.1.0",
-  "description": "",
+  "description": "Take notes while you work",
   "main": "src/index.js",
   "bin": {
-    "labnotes": "labnotes.js"
+    "takeamemo": "takeamemo.js"
   },
   "scripts": {
     "lint": "standard",

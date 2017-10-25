@@ -14,7 +14,7 @@ const fecha = require('fecha')
 const homedir = require('homedir')
 const mkdirp = require('mkdirp')
 
-const notesDir = path.join(homedir(), '.labnotes')
+const notesDir = path.join(homedir(), '.memos')
 mkdirp.sync(notesDir)
 
 const trayImages = {
@@ -49,7 +49,7 @@ function start () {
     }
 
     tray = new Tray(trayImages.off)
-    tray.setToolTip('labnotes')
+    tray.setToolTip('takeamemo')
 
     const hotkey = globalShortcut.register('Command+\'', () => {
       recording = !recording
@@ -60,13 +60,14 @@ function start () {
         recordingAt = new Date()
         ts = fecha.format(recordingAt, 'YYYY-MM-DD-HH-mm-ss')
         const filename = `${ts}.png`
-
-        screenshot(path.join(notesDir, filename), (err) => {
+        const absFilename = path.join(notesDir, filename)
+        
+        screenshot(absFilename, (err) => {
           if (err) {
             return console.error('Failed saving screenshot', filename, err)
           }
 
-          console.log('Saved screenshot', filename)
+          console.log('Saved screenshot', absFilename)
         })
       }
       win.webContents.send(
