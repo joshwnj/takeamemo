@@ -48,7 +48,6 @@ function start () {
     tray.setToolTip('labnotes')
 
     const hotkey = globalShortcut.register('Command+\'', () => {
-      console.log('hotkey pressed')
       recording = !recording
 
       tray.setImage(trayImages[recording ? 'on' : 'off'])
@@ -74,7 +73,7 @@ function start () {
     })
 
     if (!hotkey) {
-      console.error('Hotkey registration failed')
+      throw new Error('Hotkey registration failed')
     }
   })
 
