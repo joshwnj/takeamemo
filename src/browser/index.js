@@ -1,3 +1,4 @@
+/* eslint-env browser */
 const ipc = require('electron').ipcRenderer
 const Microm = require('microm')
 const fs = require('fs')
@@ -7,7 +8,7 @@ let microm
 ipc.on('start-recording', () => {
   microm = new Microm()
   microm.record().then(() => {
-    
+
   }).catch(() => {
     alert('Failed to start recording')
   })
@@ -16,7 +17,7 @@ ipc.on('start-recording', () => {
 ipc.on('stop-recording', (event, dir, ts) => {
   if (!microm) {
     alert('No microm instance available')
-    return 
+    return
   }
 
   microm.stop().then(() => {

@@ -7,7 +7,8 @@
     "labnotes": "labnotes.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "standard",
+    "test": "npm run lint"
   },
   "keywords": [],
   "author": "joshwnj",
@@ -18,5 +19,8 @@
     "homedir": "^0.6.0",
     "microm": "^0.2.4",
     "mkdirp": "^0.5.1"
+  },
+  "devDependencies": {
+    "standard": "^10.0.3"
   }
 }

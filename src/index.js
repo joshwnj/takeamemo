@@ -1,7 +1,7 @@
 'use strict'
 
-const { 
-  app, 
+const {
+  app,
   BrowserWindow,
   globalShortcut,
   ipcMain,
@@ -70,8 +70,8 @@ function start () {
         })
       }
       win.webContents.send(
-        recording ? 'start-recording' : 'stop-recording', 
-        notesDir, 
+        recording ? 'start-recording' : 'stop-recording',
+        notesDir,
         ts
       )
     })
