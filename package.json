@@ -1,6 +1,6 @@
 {
   "name": "takeamemo",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Take notes while you work",
   "main": "src/index.js",
   "bin": {
