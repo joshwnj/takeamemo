@@ -11,8 +11,11 @@ const {
 const path = require('path')
 const screenshot = require('desktop-screenshot')
 const fecha = require('fecha')
+const fs = require('fs')
 const homedir = require('homedir')
 const mkdirp = require('mkdirp')
+const notifier = require('node-notifier')
+const clipboardWatcher = require('electron-clipboard-watcher')
 
 const notesDir = path.join(homedir(), '.memos')
 mkdirp.sync(notesDir)
@@ -29,6 +32,9 @@ function start () {
   let recording = false
   let recordingAt
   let ts
+  let seq = 0
+  const watchDelay = 1000
+  let watcher
 
   ipcMain.on('wrote', (event, filename) => {
     console.log('wrote', filename)
@@ -57,11 +63,14 @@ function start () {
       tray.setImage(trayImages[recording ? 'on' : 'off'])
 
       if (recording) {
+        startWatching()
+
         recordingAt = new Date()
         ts = fecha.format(recordingAt, 'YYYY-MM-DD-HH-mm-ss')
+        seq = 0
         const filename = `${ts}.png`
         const absFilename = path.join(notesDir, filename)
-        
+
         screenshot(absFilename, (err) => {
           if (err) {
             return console.error('Failed saving screenshot', filename, err)
@@ -69,7 +78,10 @@ function start () {
 
           console.log('Saved screenshot', absFilename)
         })
+      } else {
+        stopWatching()
       }
+
       win.webContents.send(
         recording ? 'start-recording' : 'stop-recording',
         notesDir,
@@ -85,4 +97,74 @@ function start () {
   app.on('will-quit', () => {
     globalShortcut.unregisterAll()
   })
+
+  function saveFromClipboard (content, ext) {
+    const filename = `${ts}-${seq}.${ext}`
+    seq += 1
+
+    const absFilename = path.join(notesDir, filename)
+
+    fs.writeFile(absFilename, content, err => {
+      if (err) {
+        console.error('Unable to write:', absFilename)
+      }
+    })
+
+    return filename
+  }
+
+  function startWatching () {
+    if (watcher) { watcher.stop() }
+    watcher = clipboardWatcher({
+      watchDelay,
+      onTextChange: (text) => {
+        saveFromClipboard(text, 'txt')
+        notifyTextChange(text)
+      },
+      onImageChange: (image) => {
+        const imageFilename = saveFromClipboard(image.toPng(), 'png')
+        console.log('image changed', image.getSize())
+
+        const size = image.getSize()
+        saveFromClipboard(`
+---
+width: ${size.width}
+height: ${size.height}
+---
+
+![${imageFilename}](${imageFilename})
+`, 'md')
+
+        notifyImageChange(imageFilename)
+      }
+    })
+  }
+
+  function stopWatching () {
+    if (watcher) { watcher.stop() }
+  }
+
+  function notifyTextChange (text) {
+    notifier.notify({
+      title: 'Memo: Text',
+      message: text,
+      icon: path.join(__dirname, 'assets', 'icon.png')
+    }, (err) => {
+      if (err) {
+        console.error('Notification failed', err)
+      }
+    })
+  }
+
+  function notifyImageChange (imagePath) {
+    notifier.notify({
+      title: 'Memo: Image',
+      message: path.basename(imagePath),
+      icon: imagePath
+    }, (err) => {
+      if (err) {
+        console.error('Notification failed', err)
+      }
+    })
+  }
 }
